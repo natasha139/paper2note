@@ -32,7 +32,11 @@ export async function onRequest({ request, env }) {
         { role: 'user', content: JSON.stringify(input) }
       ] })
     });
-    if (!result.ok) return reply({ error: result.status === 429 ? 'AI 服务繁忙，请稍后重试' : 'AI 服务暂时不可用，请稍后重试' }, 502);
+    if (!result.ok) {
+      console.warn(JSON.stringify({ event: 'ai_provider_failure', status: result.status }));
+      const message = result.status === 401 ? 'AI 密钥验证失败，请检查密钥及其地域是否为北京' : result.status === 403 ? 'AI 服务权限不足，请检查模型开通状态和账户额度' : result.status === 429 ? 'AI 服务繁忙或额度受限，请稍后重试' : 'AI 服务暂时不可用，请稍后重试';
+      return reply({ error: message }, 502);
+    }
     const payload = await result.json();
     if (payload.choices?.[0]?.finish_reason !== 'stop') throw new Error('Incomplete output');
     const note = JSON.parse(payload.choices[0].message.content);
