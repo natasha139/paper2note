@@ -4,7 +4,7 @@
 
 ## AI 优化
 
-前端调用同源 `POST /api/polish`，Cloudflare Pages Functions 使用服务端 `QWEN_API_KEY` 调用通义千问。密钥不进入前端产物。可选服务端变量 `QWEN_MODEL`，默认 `qwen-plus`。
+前端调用同源 `POST /api/polish`，Cloudflare Pages Functions 使用服务端 `QWEN_API_KEY` 调用通义千问。密钥不进入前端产物。使用用户提供的免费模型池，按到期日优先调用；失败时切换下一个，跳过已到期模型。模型与到期日见 `functions/api/polish.js`。
 
 在 Cloudflare 项目 `paper2note` 的生产环境配置 `QWEN_API_KEY` secret，再部署。未配置密钥时接口明确返回 503。支持标题、研究问题、方法、贡献等资料，输出标题、价值、核心要点和标签；不得依据标题编造研究结果。
 
