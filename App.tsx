@@ -171,7 +171,7 @@ export default function App() {
       const polished = await polishNoteContent(data);
       setData(prev => ({ ...prev, ...polished }));
     } catch (error) {
-      console.error(error);
+      alert(error instanceof Error ? error.message : "AI 优化失败，请稍后重试");
     } finally {
       setIsPolishing(false);
     }

@@ -1,20 +1,23 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Paper2Note
 
-# Run and deploy your AI Studio app
+论文阅读笔记与小红书文案工具，生产地址：https://paper2note.pages.dev/。
 
-This contains everything you need to run your app locally.
+## AI 优化
 
-View your app in AI Studio: https://ai.studio/apps/9cb00e40-3826-43a8-b2ce-7a0ba7b3e122
+前端调用同源 `POST /api/polish`，Cloudflare Pages Functions 使用服务端 `QWEN_API_KEY` 调用通义千问。密钥不进入前端产物。可选服务端变量 `QWEN_MODEL`，默认 `qwen-plus`。
 
-## Run Locally
+在 Cloudflare 项目 `paper2note` 的生产环境配置 `QWEN_API_KEY` secret，再部署。未配置密钥时接口明确返回 503。支持标题、研究问题、方法、贡献等资料，输出标题、价值、核心要点和标签；不得依据标题编造研究结果。
 
-**Prerequisites:**  Node.js
+## 验证与部署
 
+```sh
+npm ci
+npm run lint
+npm test
+npm run build
+npx wrangler pages deploy dist --project-name paper2note --branch main
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+本地完整 API 开发：在被 Git 忽略的 `.dev.vars` 中配置 `QWEN_API_KEY`，构建后运行 `npx wrangler pages dev dist`。`npm run dev` 只提供前端。
+
+现有 GitHub Pages 镜像仅提供静态页面，不执行 Pages Functions；AI 功能使用上述 Cloudflare 生产站点。
